@@ -9,51 +9,45 @@
         :root { 
             --pudding-yellow: #FFED99; 
             --pudding-brown: #634832; 
-            --pudding-syrup: #7B3F00; /* 조금 더 딥한 카라멜색 */
+            --pudding-syrup: #8B4513; 
             --pudding-cream: #FFF9E3; 
             --point-red: #FF6B6B; 
         }
 
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Pretendard', sans-serif; background-color: var(--pudding-cream); color: var(--pudding-brown); overflow-x: hidden; }
 
-        /* --- 흐르는 시럽 디자인 (수정됨) --- */
+        /* --- 심플하고 깔끔한 시럽 상단바 --- */
         #syrup-header {
             position: relative;
             width: 100%;
-            height: 45px;
+            height: 50px;
             background: var(--pudding-syrup);
             z-index: 10;
+            /* 하단을 물결 모양으로 만드는 곡선 처리 */
+            border-radius: 0 0 40px 40px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        /* 흐르는 모양을 만드는 가상 요소들 */
-        .syrup-drip {
-            position: absolute;
-            background: var(--pudding-syrup);
-            border-radius: 0 0 50% 50% / 0 0 100% 100%; /* 아래쪽으로 길게 늘어지는 곡선 */
-            animation: syrup-flow 3s ease-in-out infinite alternate;
-            transform-origin: top;
-        }
-
-        /* 개별 물방울들의 위치와 크기 (불규칙하게 배치) */
-        .drip-1 { width: 40px; height: 60px; left: 5%; animation-delay: 0s; }
-        .drip-2 { width: 25px; height: 40px; left: 20%; animation-delay: 0.5s; }
-        .drip-3 { width: 50px; height: 80px; left: 45%; animation-delay: 0.2s; }
-        .drip-4 { width: 30px; height: 55px; left: 75%; animation-delay: 0.8s; }
-        .drip-5 { width: 20px; height: 35px; left: 90%; animation-delay: 0.3s; }
-
-        @keyframes syrup-flow {
-            from { transform: scaleY(1); }
-            to { transform: scaleY(1.15); } /* 미세하게 늘어났다 줄어들었다 하는 효과 */
-        }
-
-        /* --- 메인 화면 컨텐츠 --- */
-        .container { max-width: 500px; margin: 0 auto; padding: 60px 20px 20px 20px; text-align: center; display: flex; flex-direction: column; min-height: 100vh; box-sizing: border-box; }
-        h1 { font-size: 26px; margin-top: 20px; }
-        .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 30px; }
-        .mood-btn { padding: 20px 5px; border: none; background: white; border-radius: 18px; cursor: pointer; color: var(--pudding-brown); font-size: 14px; font-weight: 600; box-shadow: 0 4px 0px var(--pudding-yellow); }
+        /* 메인 컨테이너 */
+        .container { max-width: 500px; margin: 0 auto; padding: 40px 20px 20px 20px; text-align: center; display: flex; flex-direction: column; min-height: 100vh; box-sizing: border-box; }
         
-        #result-screen { display: none; background: white; border-radius: 25px; padding: 30px 20px; border: 3px solid var(--pudding-yellow); margin-top: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
-        .recommended-item { font-size: 32px; font-weight: 900; color: var(--pudding-syrup); margin: 15px 0; }
+        h1 { font-size: 26px; margin-top: 20px; letter-spacing: -1px; }
+        .sub-title { font-size: 15px; opacity: 0.7; margin-bottom: 30px; }
+
+        .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .mood-btn { 
+            padding: 20px 5px; border: none; background: white; border-radius: 18px; 
+            cursor: pointer; color: var(--pudding-brown); font-size: 14px; font-weight: 600; 
+            box-shadow: 0 4px 0px var(--pudding-yellow); 
+        }
+        
+        #result-screen { 
+            display: none; background: white; border-radius: 25px; padding: 30px 20px; 
+            border: 3px solid var(--pudding-yellow); margin-top: 25px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+        }
+        .recommended-item { font-size: 30px; font-weight: 900; color: var(--pudding-syrup); margin: 15px 0; }
+        
         .action-btn { width: 100%; padding: 16px; margin-top: 10px; border-radius: 15px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; }
         .go-map { background: var(--pudding-syrup); color: white; }
         .retry { background: #F3F3F3; color: #999; }
@@ -62,24 +56,18 @@
         #map-area { display: none; height: 100vh; width: 100%; flex-direction: column; position: fixed; top: 0; left: 0; z-index: 100; }
         #map { width: 100%; flex: 1; }
         #placesList { height: 40%; background: white; overflow-y: auto; border-top: 4px solid var(--pudding-syrup); }
-        .item { padding: 18px; border-bottom: 1px solid #f0f0f0; text-align: left; }
-        .item .title { font-weight: bold; color: var(--pudding-syrup); font-size: 16px; }
-        .back-btn { position: absolute; top: 15px; left: 15px; z-index: 1001; padding: 10px 18px; background: white; border-radius: 25px; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1); font-weight: bold; }
+        .item { padding: 18px; border-bottom: 1px solid #f5f5f5; text-align: left; }
+        .item .title { font-weight: bold; color: var(--pudding-syrup); }
+        .back-btn { position: absolute; top: 15px; left: 15px; z-index: 1001; padding: 10px 18px; background: white; border-radius: 25px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="syrup-header">
-        <div class="syrup-drip drip-1"></div>
-        <div class="syrup-drip drip-2"></div>
-        <div class="syrup-drip drip-3"></div>
-        <div class="syrup-drip drip-4"></div>
-        <div class="syrup-drip drip-5"></div>
-    </div>
+    <div id="syrup-header"></div>
 
     <div id="main-screen" class="container">
         <h1>🍮 오늘의 디저트</h1>
-        <p style="font-size: 15px; opacity: 0.8;">지금 내 기분에 딱 맞는 디저트는?</p>
+        <p class="sub-title">지금 내 기분에 딱 맞는 디저트는?</p>
         
         <div class="mood-grid">
             <button class="mood-btn" onclick="pickDessert('행복해')">😊<br>행복</button>
@@ -91,7 +79,7 @@
         </div>
 
         <div id="result-screen">
-            <div id="mood-desc"></div>
+            <div id="mood-desc" style="font-size: 14px;"></div>
             <div id="dessert-name" class="recommended-item"></div>
             <button class="action-btn go-map" onclick="showMap()">가까운 맛집 찾기</button>
             <button class="action-btn retry" onclick="resetPage()">다른 거 고를래</button>
@@ -105,7 +93,6 @@
     </div>
 
     <script>
-        // --- 기존 로직 동일 ---
         const menu = ["푸딩", "마카롱", "수플레", "타르트", "소금빵", "케이크", "휘낭시에", "크로플"];
         let picked = "";
         let mapObj, psObj, infoObj;
@@ -153,13 +140,12 @@
             const listDiv = document.getElementById('placesList');
             const bounds = new kakao.maps.LatLngBounds();
             listDiv.innerHTML = '';
-
             places.forEach(p => {
                 const pos = new kakao.maps.LatLng(p.y, p.x);
                 const marker = new kakao.maps.Marker({ position: pos, map: mapObj });
                 const item = document.createElement('div');
                 item.className = 'item';
-                item.innerHTML = `<span class="title">${p.place_name}</span><span style="font-size:12px; color:#999; display:block; margin-top:4px;">${p.road_address_name || p.address_name}</span>`;
+                item.innerHTML = `<span class="title">${p.place_name}</span><br><span style="font-size:12px; color:#999;">${p.road_address_name || p.address_name}</span>`;
                 item.onclick = () => {
                     mapObj.panTo(pos);
                     infoObj.setContent(`<div style="padding:15px; font-size:12px; width:180px;"><strong>${p.place_name}</strong><br><a href="${p.place_url}" target="_blank" style="color:var(--point-red); margin-top:5px; display:inline-block;">[상세보기]</a></div>`);
