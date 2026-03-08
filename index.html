@@ -7,18 +7,28 @@
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=64c37f644299d875323a80d41b3ece10&libraries=services"></script>
     <style>
         :root { --pudding-yellow: #FFED99; --pudding-brown: #634832; --pudding-cream: #FFF9E3; --point-red: #FF6B6B; }
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Pretendard', sans-serif; background-color: var(--pudding-cream); color: var(--pudding-brown); overflow-x: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Pretendard', sans-serif; background-color: var(--pudding-cream); }
+        
+        /* 메인/결과 화면 스타일 */
         .container { max-width: 500px; margin: 0 auto; padding: 20px; text-align: center; display: flex; flex-direction: column; min-height: 100vh; box-sizing: border-box; }
         .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 30px; }
-        .mood-btn { padding: 15px 10px; border: 2px solid var(--pudding-yellow); background: white; border-radius: 12px; cursor: pointer; font-size: 14px; color: var(--pudding-brown); }
+        .mood-btn { padding: 15px 10px; border: 2px solid var(--pudding-yellow); background: white; border-radius: 12px; cursor: pointer; color: var(--pudding-brown); }
         #result-screen { display: none; background: white; border-radius: 20px; padding: 30px 20px; border: 3px dashed var(--pudding-yellow); margin-top: 20px; }
         .recommended-item { font-size: 28px; font-weight: bold; color: var(--point-red); margin: 10px 0; }
         .action-btn { width: 100%; padding: 15px; margin-top: 10px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; }
         .go-map { background: var(--point-red); color: white; }
         .retry { background: #eee; color: #666; }
-        #map-container { display: none; height: 100vh; position: relative; width: 100%; }
-        #map { width: 100%; height: 100%; }
-        .back-home { position: absolute; top: 15px; left: 15px; z-index: 100; padding: 10px 15px; background: white; border-radius: 20px; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-weight: bold; }
+
+        /* 지도 및 리스트 레이아웃 */
+        #map-container { display: none; height: 100vh; position: relative; display: flex; flex-direction: column; }
+        #map { width: 100%; flex: 1; } /* 지도가 위쪽 절반 이상 차지 */
+        #placesList { height: 250px; background: white; overflow-y: auto; padding: 0; margin: 0; border-top: 2px solid var(--pudding-yellow); }
+        .item { padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; }
+        .item:hover { background-color: var(--pudding-cream); }
+        .item .title { font-weight: bold; color: var(--pudding-brown); margin-bottom: 5px; display: block; }
+        .item .address { font-size: 12px; color: #888; }
+        
+        .back-home { position: absolute; top: 15px; left: 15px; z-index: 100; padding: 8px 12px; background: white; border-radius: 20px; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -43,10 +53,10 @@
         </div>
     </div>
 
-    <div id="map-container">
+    <div id="map-container" style="display:none;">
         <button class="back-home" onclick="resetAll()">◀ 처음으로</button>
         <div id="map"></div>
-    </div>
+        <div id="placesList"></div> </div>
 
     <script>
         const dessertList = ["푸딩", "수플레", "마카롱", "소금빵", "케이크", "티라미수", "타르트", "휘낭시에"];
@@ -69,48 +79,55 @@
 
         function showMap() {
             document.getElementById('main-screen').style.display = 'none';
-            document.getElementById('map-container').style.display = 'block';
+            document.getElementById('map-container').style.display = 'flex';
 
-            // 지도 초기화
             if (!map) {
-                const container = document.getElementById('map');
-                map = new kakao.maps.Map(container, { center: new kakao.maps.LatLng(37.5668, 126.9786), level: 4 });
+                map = new kakao.maps.Map(document.getElementById('map'), { center: new kakao.maps.LatLng(37.5668, 126.9786), level: 4 });
                 ps = new kakao.maps.services.Places();
                 infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
             }
 
-            // 위치 기반 검색 실행
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function(pos) {
-                    const lat = pos.coords.latitude;
-                    const lon = pos.coords.longitude;
-                    const locPosition = new kakao.maps.LatLng(lat, lon);
-
+                    const locPosition = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
                     map.setCenter(locPosition);
                     
-                    // 검색 수행: 검색어는 '디저트이름 카페'
                     ps.keywordSearch(selectedDessert + ' 카페', function(data, status) {
                         if (status === kakao.maps.services.Status.OK) {
-                            const bounds = new kakao.maps.LatLngBounds();
-                            for (let i = 0; i < data.length; i++) {
-                                displayMarker(data[i]);
-                                bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
-                            }
-                            map.setBounds(bounds); // 검색 결과가 다 보이도록 범위 조정
+                            displayPlaces(data); // 목록 표시 함수 호출
                         } else {
-                            alert("주변 2km 내에 해당 맛집을 찾지 못했어요 😢");
+                            alert("주변에 맛집이 없어요 😢");
                         }
-                    }, { location: locPosition, radius: 2000 }); // 2km 반경
+                    }, { location: locPosition, radius: 2000 });
                 });
             }
         }
 
-        function displayMarker(place) {
-            const marker = new kakao.maps.Marker({ map: map, position: new kakao.maps.LatLng(place.y, place.x) });
-            kakao.maps.event.addListener(marker, 'click', function() {
-                infowindow.setContent('<div style="padding:10px;font-size:12px;">' + place.place_name + '<br><a href="https://map.kakao.com/link/to/' + place.id + '" target="_blank" style="color:blue">길찾기</a></div>');
-                infowindow.open(map, marker);
-            });
+        // 목록 표시 및 마커 생성 함수
+        function displayPlaces(places) {
+            const listEl = document.getElementById('placesList');
+            const bounds = new kakao.maps.LatLngBounds();
+            listEl.innerHTML = ''; // 이전 목록 삭제
+
+            for (let i = 0; i < places.length; i++) {
+                const placePosition = new kakao.maps.LatLng(places[i].y, places[i].x);
+                const marker = new kakao.maps.Marker({ position: placePosition, map: map });
+                const itemEl = document.createElement('div');
+                
+                itemEl.className = 'item';
+                itemEl.innerHTML = `<span class="title">${places[i].place_name}</span><span class="address">${places[i].road_address_name || places[i].address_name}</span>`;
+
+                // 리스트 아이템 클릭 시 지도 이동 및 정보창 표시
+                itemEl.onclick = function() {
+                    map.panTo(placePosition);
+                    infowindow.setContent('<div style="padding:10px;font-size:12px;">' + places[i].place_name + '</div>');
+                    infowindow.open(map, marker);
+                };
+
+                listEl.appendChild(itemEl);
+                bounds.extend(placePosition);
+            }
+            map.setBounds(bounds);
         }
     </script>
 </body>
