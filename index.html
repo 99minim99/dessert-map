@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>오늘의 푸딩 추천</title>
+    <title>푸루푸루의 디저트 추천</title>
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=64c37f644299d875323a80d41b3ece10&libraries=services"></script>
     <style>
         :root { 
@@ -81,7 +81,7 @@
         <div id="result-screen">
             <div id="mood-desc" style="font-size: 14px;"></div>
             <div id="dessert-name" class="recommended-item"></div>
-            <button class="action-btn go-map" onclick="showMap()">가까운 맛집 찾기</button>
+            <button class="action-btn go-map" onclick="showMap()">근처 카페페 찾기</button>
             <button class="action-btn retry" onclick="resetPage()">다른 거 고를래</button>
         </div>
     </div>
@@ -130,7 +130,7 @@
                     mapObj.setCenter(myPos);
                     psObj.keywordSearch(picked + ' 카페', (data, status) => {
                         if (status === kakao.maps.services.Status.OK) renderList(data);
-                        else alert("주변에 검색 결과가 없어요!");
+                        else alert("주변에 원하는 디저트가 없어요😭");
                     }, { location: myPos, radius: 2000 });
                 });
             }
