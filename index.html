@@ -9,145 +9,77 @@
         :root { 
             --pudding-yellow: #FFED99; 
             --pudding-brown: #634832; 
-            --pudding-syrup: #8B4513; /* 더 진한 시럽색 */
+            --pudding-syrup: #7B3F00; /* 조금 더 딥한 카라멜색 */
             --pudding-cream: #FFF9E3; 
             --point-red: #FF6B6B; 
         }
 
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Pretendard', sans-serif; background-color: var(--pudding-cream); color: var(--pudding-brown); overflow-x: hidden; }
 
-        /* --- 푸딩 소스 흘러내리는 상단바 디자인 --- */
-        .syrup-header {
+        /* --- 흐르는 시럽 디자인 (수정됨) --- */
+        #syrup-header {
             position: relative;
             width: 100%;
-            height: 40px;
+            height: 45px;
             background: var(--pudding-syrup);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             z-index: 10;
         }
 
-        /* 시럽 방울 효과 */
-        .syrup-header::after {
-            content: '';
+        /* 흐르는 모양을 만드는 가상 요소들 */
+        .syrup-drip {
             position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            height: 30px;
-            background-image: radial-gradient(circle at 10% 0%, var(--pudding-syrup) 30px, transparent 31px),
-                              radial-gradient(circle at 35% 0%, var(--pudding-syrup) 20px, transparent 21px),
-                              radial-gradient(circle at 65% 0%, var(--pudding-syrup) 35px, transparent 36px),
-                              radial-gradient(circle at 90% 0%, var(--pudding-syrup) 25px, transparent 26px);
-            filter: drop-shadow(0 4px 2px rgba(0,0,0,0.05));
+            background: var(--pudding-syrup);
+            border-radius: 0 0 50% 50% / 0 0 100% 100%; /* 아래쪽으로 길게 늘어지는 곡선 */
+            animation: syrup-flow 3s ease-in-out infinite alternate;
+            transform-origin: top;
         }
 
-        /* 메인 화면 컨테이너 */
-        .container { 
-            max-width: 500px; 
-            margin: 0 auto; 
-            padding: 40px 20px 20px 20px; 
-            text-align: center; 
-            display: flex; 
-            flex-direction: column; 
-            min-height: 100vh; 
-            box-sizing: border-box; 
+        /* 개별 물방울들의 위치와 크기 (불규칙하게 배치) */
+        .drip-1 { width: 40px; height: 60px; left: 5%; animation-delay: 0s; }
+        .drip-2 { width: 25px; height: 40px; left: 20%; animation-delay: 0.5s; }
+        .drip-3 { width: 50px; height: 80px; left: 45%; animation-delay: 0.2s; }
+        .drip-4 { width: 30px; height: 55px; left: 75%; animation-delay: 0.8s; }
+        .drip-5 { width: 20px; height: 35px; left: 90%; animation-delay: 0.3s; }
+
+        @keyframes syrup-flow {
+            from { transform: scaleY(1); }
+            to { transform: scaleY(1.15); } /* 미세하게 늘어났다 줄어들었다 하는 효과 */
         }
 
-        h1 { font-size: 28px; margin-top: 30px; margin-bottom: 10px; }
-        .sub-title { font-size: 15px; opacity: 0.8; margin-bottom: 40px; }
-
-        /* 기분 버튼 그리드 */
-        .mood-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 12px; 
-            margin-bottom: 30px; 
-        }
-
-        .mood-btn { 
-            padding: 20px 5px; 
-            border: none;
-            background: white; 
-            border-radius: 18px; 
-            cursor: pointer; 
-            color: var(--pudding-brown); 
-            font-size: 14px; 
-            font-weight: 600;
-            box-shadow: 0 4px 0px var(--pudding-yellow);
-            transition: transform 0.1s, box-shadow 0.1s;
-        }
-
-        .mood-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0px var(--pudding-yellow);
-        }
-
-        /* 결과 팝업 애니메이션 */
-        @keyframes popIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        #result-screen { 
-            display: none; 
-            background: white; 
-            border-radius: 25px; 
-            padding: 30px 20px; 
-            border: 3px solid var(--pudding-yellow); 
-            margin-top: 20px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .recommended-item { font-size: 32px; font-weight: 900; color: var(--pudding-syrup); margin: 15px 0; }
+        /* --- 메인 화면 컨텐츠 --- */
+        .container { max-width: 500px; margin: 0 auto; padding: 60px 20px 20px 20px; text-align: center; display: flex; flex-direction: column; min-height: 100vh; box-sizing: border-box; }
+        h1 { font-size: 26px; margin-top: 20px; }
+        .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 30px; }
+        .mood-btn { padding: 20px 5px; border: none; background: white; border-radius: 18px; cursor: pointer; color: var(--pudding-brown); font-size: 14px; font-weight: 600; box-shadow: 0 4px 0px var(--pudding-yellow); }
         
-        .action-btn { 
-            width: 100%; 
-            padding: 16px; 
-            margin-top: 10px; 
-            border-radius: 15px; 
-            border: none; 
-            font-size: 16px; 
-            font-weight: bold; 
-            cursor: pointer; 
-        }
-        .go-map { background: var(--pudding-syrup); color: white; margin-top: 20px; }
+        #result-screen { display: none; background: white; border-radius: 25px; padding: 30px 20px; border: 3px solid var(--pudding-yellow); margin-top: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+        .recommended-item { font-size: 32px; font-weight: 900; color: var(--pudding-syrup); margin: 15px 0; }
+        .action-btn { width: 100%; padding: 16px; margin-top: 10px; border-radius: 15px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .go-map { background: var(--pudding-syrup); color: white; }
         .retry { background: #F3F3F3; color: #999; }
 
-        /* 지도 영역 디자인 */
-        #map-area { display: none; height: 100vh; flex-direction: column; position: relative; }
+        /* 지도 영역 */
+        #map-area { display: none; height: 100vh; width: 100%; flex-direction: column; position: fixed; top: 0; left: 0; z-index: 100; }
         #map { width: 100%; flex: 1; }
-        #placesList { 
-            height: 45%; 
-            background: white; 
-            overflow-y: auto; 
-            border-top: 5px solid var(--pudding-syrup); 
-            border-radius: 25px 25px 0 0;
-            margin-top: -20px;
-            z-index: 5;
-            padding-top: 10px;
-        }
-        
-        .item { padding: 20px; border-bottom: 1px solid #f9f9f9; text-align: left; transition: background 0.2s; }
-        .item:active { background: var(--pudding-cream); }
-        .item .title { font-weight: bold; font-size: 17px; color: var(--pudding-syrup); display: block; }
-        .item .address { font-size: 13px; color: #777; margin-top: 4px; display: block; }
-        
-        .back-btn { 
-            position: absolute; top: 20px; left: 20px; z-index: 1000; 
-            padding: 12px 20px; background: white; border-radius: 30px; 
-            border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.15); 
-            font-weight: bold; color: var(--pudding-syrup);
-        }
+        #placesList { height: 40%; background: white; overflow-y: auto; border-top: 4px solid var(--pudding-syrup); }
+        .item { padding: 18px; border-bottom: 1px solid #f0f0f0; text-align: left; }
+        .item .title { font-weight: bold; color: var(--pudding-syrup); font-size: 16px; }
+        .back-btn { position: absolute; top: 15px; left: 15px; z-index: 1001; padding: 10px 18px; background: white; border-radius: 25px; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1); font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="syrup-header"></div>
+    <div id="syrup-header">
+        <div class="syrup-drip drip-1"></div>
+        <div class="syrup-drip drip-2"></div>
+        <div class="syrup-drip drip-3"></div>
+        <div class="syrup-drip drip-4"></div>
+        <div class="syrup-drip drip-5"></div>
+    </div>
 
     <div id="main-screen" class="container">
         <h1>🍮 오늘의 디저트</h1>
-        <p class="sub-title">지금 내 기분에 딱 맞는 디저트는?</p>
+        <p style="font-size: 15px; opacity: 0.8;">지금 내 기분에 딱 맞는 디저트는?</p>
         
         <div class="mood-grid">
             <button class="mood-btn" onclick="pickDessert('행복해')">😊<br>행복</button>
@@ -159,7 +91,7 @@
         </div>
 
         <div id="result-screen">
-            <div id="mood-desc" style="font-size: 14px; font-weight: 500;"></div>
+            <div id="mood-desc"></div>
             <div id="dessert-name" class="recommended-item"></div>
             <button class="action-btn go-map" onclick="showMap()">가까운 맛집 찾기</button>
             <button class="action-btn retry" onclick="resetPage()">다른 거 고를래</button>
@@ -173,7 +105,7 @@
     </div>
 
     <script>
-        // --- JS 로직은 기존 소스 코드를 그대로 유지합니다 ---
+        // --- 기존 로직 동일 ---
         const menu = ["푸딩", "마카롱", "수플레", "타르트", "소금빵", "케이크", "휘낭시에", "크로플"];
         let picked = "";
         let mapObj, psObj, infoObj;
@@ -187,12 +119,14 @@
         }
 
         function resetPage() {
+            document.getElementById('syrup-header').style.display = 'block';
             document.getElementById('main-screen').style.display = 'block';
             document.getElementById('map-area').style.display = 'none';
             document.getElementById('result-screen').style.display = 'none';
         }
 
         function showMap() {
+            document.getElementById('syrup-header').style.display = 'none';
             document.getElementById('main-screen').style.display = 'none';
             document.getElementById('map-area').style.display = 'flex';
 
@@ -207,13 +141,9 @@
                 navigator.geolocation.getCurrentPosition(function(pos) {
                     const myPos = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
                     mapObj.setCenter(myPos);
-                    
                     psObj.keywordSearch(picked + ' 카페', (data, status) => {
-                        if (status === kakao.maps.services.Status.OK) {
-                            renderList(data);
-                        } else {
-                            alert("주변에 검색 결과가 없어요!");
-                        }
+                        if (status === kakao.maps.services.Status.OK) renderList(data);
+                        else alert("주변에 검색 결과가 없어요!");
                     }, { location: myPos, radius: 2000 });
                 });
             }
@@ -227,27 +157,14 @@
             places.forEach(p => {
                 const pos = new kakao.maps.LatLng(p.y, p.x);
                 const marker = new kakao.maps.Marker({ position: pos, map: mapObj });
-                
                 const item = document.createElement('div');
                 item.className = 'item';
-                item.innerHTML = `
-                    <span class="title">${p.place_name}</span>
-                    <span class="address">${p.road_address_name || p.address_name}</span>
-                `;
-
+                item.innerHTML = `<span class="title">${p.place_name}</span><span style="font-size:12px; color:#999; display:block; margin-top:4px;">${p.road_address_name || p.address_name}</span>`;
                 item.onclick = () => {
                     mapObj.panTo(pos);
-                    const infoContent = `
-                        <div style="padding:15px; font-size:12px; width:180px;">
-                            <strong>${p.place_name}</strong><br>
-                            <a href="${p.place_url}" target="_blank" style="color:var(--point-red); display:inline-block; margin-top:5px;">[상세보기]</a>
-                            <a href="https://map.kakao.com/link/to/${p.id}" target="_blank" style="margin-left:10px; color:#666;">[길찾기]</a>
-                        </div>
-                    `;
-                    infoObj.setContent(infoContent);
+                    infoObj.setContent(`<div style="padding:15px; font-size:12px; width:180px;"><strong>${p.place_name}</strong><br><a href="${p.place_url}" target="_blank" style="color:var(--point-red); margin-top:5px; display:inline-block;">[상세보기]</a></div>`);
                     infoObj.open(mapObj, marker);
                 };
-
                 listDiv.appendChild(item);
                 bounds.extend(pos);
             });
