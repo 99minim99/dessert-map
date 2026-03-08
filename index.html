@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>내 주변 디저트 찾기 (네이버)</title>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=64c37f644299d875323a80d41b3ece10&libraries=services"></script>
+
+<div id="dessert-app">
+    <div class="header">
+        <h1>오늘 뭐 먹지?</h1>
+        <p>먹고 싶은 디저트를 입력하면 주변 맛집을 찾아드려요! 🍰</p>
+    </div>
+
+    <div class="input-section">
+        <input type="text" id="menuInput" placeholder="예: 푸딩, 수플레, 마카롱">
+        <button onclick="startSearch()" class="search-btn">카페 찾기</button>
+    </div>
+</div>
+
+<style>
+    /* 이미지와 유사한 레드 포인트 디자인 */
+    #dessert-app {
+        font-family: 'Pretendard', sans-serif;
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        text-align: center;
+        background-color: #fff;
+    }
+    .header h1 { color: #e74c3c; font-size: 28px; margin-bottom: 10px; }
+    .header p { color: #666; font-size: 14px; margin-bottom: 30px; }
+    .input-section input {
+        width: 80%;
+        padding: 15px;
+        border: 2px solid #eee;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 16px;
+    }
+    .search-btn {
+        width: 85%;
+        padding: 15px;
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
+
+<script>
+function startSearch() {
+    const keyword = document.getElementById('menuInput').value;
+    if (!keyword) {
+        alert("디저트 이름을 입력해주세요!");
+        return;
+    }
+
+    // 내 위치 가져오기
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            // 카카오 지도 검색 결과 페이지로 이동
+            const searchUrl = `https://map.kakao.com/link/search/${keyword}?location=${lat},${lng}`;
+            window.location.href = searchUrl;
+        }, function() {
+            alert("위치 정보 활용에 동의해 주셔야 주변 맛집을 찾을 수 있어요.");
+        });
+    } else {
+        alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
+    }
+}
+</script>
+</body>
+</html>
