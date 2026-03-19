@@ -16,6 +16,31 @@
 
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Pretendard', sans-serif; background-color: var(--pudding-cream); color: var(--pudding-brown); overflow-x: hidden; }
 
+        /* --- 스플래시 화면 스타일 --- */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--pudding-cream);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            transition: opacity 0.5s ease; /* 사라질 때 부드럽게 */
+        }
+        #splash-screen img {
+            width: 200px; /* 로고 크기 조절 */
+            height: auto;
+            animation: bounce 1.5s infinite; /* 로고가 통통 튀는 애니메이션 */
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
         /* --- 심플하고 깔끔한 시럽 상단바 --- */
         #syrup-header {
             position: relative;
@@ -23,7 +48,6 @@
             height: 50px;
             background: var(--pudding-syrup);
             z-index: 10;
-            /* 하단을 물결 모양으로 만드는 곡선 처리 */
             border-radius: 0 0 40px 40px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
@@ -63,6 +87,10 @@
 </head>
 <body>
 
+    <div id="splash-screen">
+        <img src="KakaoTalk_20260312_184531342.jpg" alt="Puru Mood Logo">
+    </div>
+
     <div id="syrup-header"></div>
 
     <div id="main-screen" class="container">
@@ -93,6 +121,15 @@
     </div>
 
     <script>
+        // 2. 스플래시 화면 제어 스크립트
+        window.onload = function() {
+            setTimeout(function() {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0'; // 서서히 사라짐
+                setTimeout(() => splash.style.display = 'none', 500); // 0.5초 후 제거
+            }, 2500); // 2.5초 동안 로고 유지
+        };
+
         const menu = ["푸딩", "마카롱", "수플레", "타르트", "소금빵", "케이크", "휘낭시에", "크로플"];
         let picked = "";
         let mapObj, psObj, infoObj;
