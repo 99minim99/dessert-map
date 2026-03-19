@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>푸루푸루의 디저트 다이어리</title>
+    <title>푸루무두의 디저트 다이어리</title>
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=64c37f644299d875323a80d41b3ece10&libraries=services"></script>
     <style>
         :root { 
@@ -83,10 +83,12 @@
         .form-input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 12px; box-sizing: border-box; font-size: 14px; background: var(--bg-color); color: var(--text-color); }
         .photo-zone { width: 100%; height: 150px; border: 2px dashed #ccc; border-radius: 15px; display: flex; justify-content: center; align-items: center; cursor: pointer; background-size: cover; background-position: center; margin-bottom: 15px; overflow: hidden; }
 
-        #map-area { display: none; height: 100vh; width: 100%; position: fixed; top: 0; left: 0; z-index: 100; flex-direction: column; }
+        ##map-area { display: none; height: 100vh; width: 100%; flex-direction: column; position: fixed; top: 0; left: 0; z-index: 100; }
         #map { width: 100%; flex: 1; }
-        #placesList { height: 40%; background: white; overflow-y: auto; color: #333; }
-        .back-btn { position: absolute; top: 15px; left: 15px; z-index: 1001; padding: 8px 15px; background: white; border-radius: 20px; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2); cursor: pointer; font-weight: bold; }
+        #placesList { height: 40%; background: white; overflow-y: auto; border-top: 4px solid var(--pudding-syrup); }
+        .item { padding: 18px; border-bottom: 1px solid #f5f5f5; text-align: left; }
+        .item .title { font-weight: bold; color: var(--pudding-syrup); }
+        .back-btn { position: absolute; top: 15px; left: 15px; z-index: 1001; padding: 10px 18px; background: white; border-radius: 25px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -95,7 +97,7 @@
         <img src="purumood_logo.png" alt="Puru Mood Logo">
     </div>
 
-    <div id="syrup-header" onclick="toggleDarkMode()">🍫 시럽을 누르면 '초코 모드'!</div>
+
 
     <div id="main-screen" class="container">
         <h1>🍮 오늘의 디저트</h1>
