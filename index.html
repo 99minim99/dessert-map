@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>푸루푸루의 디저트 추천</title>
+    <title>푸루푸루의 디저트 다이어리</title>
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=64c37f644299d875323a80d41b3ece10&libraries=services"></script>
     <style>
         :root { 
@@ -15,6 +15,7 @@
             --bg-color: var(--pudding-cream);
             --text-color: var(--pudding-brown);
             --card-bg: #ffffff;
+            --overlay-bg: rgba(0,0,0,0.5);
         }
 
         /* 다크 모드 (초코 푸딩 컨셉) */
@@ -23,10 +24,12 @@
             --text-color: #FFF9E3;
             --card-bg: #4A3524;
             --pudding-yellow: #D2691E;
+            --overlay-bg: rgba(0,0,0,0.8);
         }
 
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: background 0.3s, color 0.3s; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: background 0.3s, color 0.3s; overflow-x: hidden; }
 
+        /* 스플래시 & 헤더 */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #FFF9E3;
             display: flex; justify-content: center; align-items: center; z-index: 2000; transition: opacity 0.5s;
@@ -40,10 +43,12 @@
             display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;
         }
 
-        .container { max-width: 500px; margin: 0 auto; padding: 20px; text-align: center; box-sizing: border-box; }
+        /* 메인 컨테이너 */
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; text-align: center; box-sizing: border-box; padding-bottom: 80px; }
         h1 { font-size: 26px; margin-top: 20px; }
         .sub-title { font-size: 14px; opacity: 0.8; margin-bottom: 25px; }
 
+        /* 기분 버튼 그리드 */
         .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .mood-btn { 
             padding: 15px 5px; border: none; background: var(--card-bg); border-radius: 18px; 
@@ -52,190 +57,66 @@
         }
         .mood-btn:active { transform: translateY(3px); box-shadow: none; }
         
+        /* 결과 화면 */
         #result-screen { 
             display: none; background: var(--card-bg); border-radius: 25px; padding: 25px; 
             border: 3px solid var(--pudding-yellow); margin-top: 20px; 
         }
         .recommended-item { font-size: 28px; font-weight: 900; color: var(--point-red); margin: 10px 0; }
         
-        .action-btn { width: 100%; padding: 14px; margin-top: 8px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; }
+        /* 버튼 스타일 */
+        .action-btn { width: 100%; padding: 14px; margin-top: 8px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; }
         .go-map { background: var(--pudding-syrup); color: white; }
         .save-btn { background: var(--pudding-yellow); color: var(--pudding-brown); }
         .retry { background: #eee; color: #777; }
+        .submit-btn { background: var(--pudding-syrup); color: white; margin-top: 20px; }
+        .close-btn { background: #eee; color: #333; margin-top: 10px; }
 
-        /* 저장 목록 스타일 */
+        /* 저장 목록 (다이어리형) */
         #my-records { margin-top: 40px; text-align: left; }
+        #record-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .record-card { 
-            background: var(--card-bg); padding: 15px; border-radius: 15px; margin-bottom: 10px; 
-            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background: var(--card-bg); border-radius: 15px; overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; position: relative;
         }
-        .delete-btn { color: var(--point-red); cursor: pointer; font-size: 12px; }
+        .record-img { width: 100%; height: 120px; background-color: #eee; background-size: cover; background-position: center; }
+        .record-info { padding: 10px; }
+        .record-dessert { font-weight: bold; color: var(--pudding-syrup); font-size: 14px; }
+        .record-date { font-size: 11px; opacity: 0.6; }
+        .card-delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(255,255,255,0.7); color: var(--point-red); border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; z-index: 5; }
 
+        /* 모달 (팝업) 스타일 */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay-bg); z-index: 1000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+        .modal-content { background: var(--card-bg); border-radius: 25px; width: 100%; max-width: 400px; padding: 25px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
+        .modal-title { font-size: 18px; font-weight: bold; color: var(--pudding-syrup); margin-bottom: 20px; }
+        
+        /* 입력 폼 스타일 */
+        .form-group { text-align: left; margin-bottom: 15px; }
+        .form-label { font-size: 12px; font-weight: bold; margin-bottom: 5px; display: block; opacity: 0.8; }
+        .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; background: var(--bg-color); color: var(--text-color); font-size: 13px; }
+        textarea.form-input { height: 80px; resize: none; }
+        
+        /* 사진 업로드 영역 */
+        .photo-upload-zone { width: 100%; height: 150px; border: 2px dashed #ddd; border-radius: 15px; display: flex; justify-content: center; align-items: center; cursor: pointer; background-size: cover; background-position: center; position: relative; overflow: hidden; background-color: var(--bg-color); }
+        .photo-placeholder { text-align: center; color: #aaa; font-size: 12px; }
+        .photo-placeholder i { font-size: 24px; margin-bottom: 5px; display: block; }
+        #photo-input { display: none; }
+
+        /* 지도 영역 (기존 유지) */
         #map-area { display: none; height: 100vh; width: 100%; flex-direction: column; position: fixed; top: 0; left: 0; z-index: 100; }
         #map { width: 100%; flex: 1; }
         #placesList { height: 40%; background: white; overflow-y: auto; border-top: 4px solid var(--pudding-syrup); }
-        .item { padding: 15px; border-bottom: 1px solid #eee; color: #333; }
+        .item { padding: 15px; border-bottom: 1px solid #eee; color: #333; text-align: left; }
         .back-btn { position: absolute; top: 15px; left: 15px; z-index: 1001; padding: 8px 15px; background: white; border-radius: 20px; border: none; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
-        <img src="purumood_logo.png" alt="Puru Mood Logo">
+        <img src="https://i.ibb.co/3ykZ8f9/Kakao-Talk-20260312-184531342.png" alt="Puru Mood Logo">
     </div>
 
     <div id="syrup-header" onclick="toggleDarkMode()">🍫 시럽을 누르면 '초코 모드'!</div>
 
     <div id="main-screen" class="container">
-        <h1>🍮 오늘의 디저트</h1>
-        <p class="sub-title">지금 내 기분에 딱 맞는 디저트는?</p>
-        
-        <div class="mood-grid">
-            <button class="mood-btn" onclick="pickDessert('행복해')">😊<br>행복</button>
-            <button class="mood-btn" onclick="pickDessert('우울해')">😢<br>우울</button>
-            <button class="mood-btn" onclick="pickDessert('당부족')">🔋<br>충전</button>
-            <button class="mood-btn" onclick="pickDessert('심심해')">😐<br>심심</button>
-            <button class="mood-btn" onclick="pickDessert('스트레스')">🔥<br>분노</button>
-            <button class="mood-btn" onclick="pickDessert('피곤해')">🥱<br>피곤</button>
-        </div>
-
-        <div id="result-screen">
-            <div id="mood-desc" style="font-size: 14px; opacity: 0.8;"></div>
-            <div id="dessert-name" class="recommended-item"></div>
-            <button class="action-btn save-btn" onclick="saveToMyList()">⭐ 이 디저트 저장하기</button>
-            <button class="action-btn go-map" onclick="showMap()">근처 카페 찾기</button>
-            <button class="action-btn retry" onclick="resetPage()">다시 고를래</button>
-        </div>
-
-        <div id="my-records">
-            <h3 style="font-size: 16px;">📂 나의 디저트 기록</h3>
-            <div id="record-list">
-                <p style="font-size: 12px; opacity: 0.6;">아직 저장된 기록이 없어요.</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="map-area">
-        <button class="back-btn" onclick="resetPage()">◀ 돌아가기</button>
-        <div id="map"></div>
-        <div id="placesList"></div>
-    </div>
-
-    <script>
-        const menu = ["푸딩", "마카롱", "수플레", "타르트", "소금빵", "케이크", "휘낭시에", "크로플", "까눌레", "약과 쿠키"];
-        let picked = "";
-        let currentMood = "";
-        let mapObj, psObj, infoObj;
-
-        window.onload = function() {
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0';
-                setTimeout(() => splash.style.display = 'none', 500);
-            }, 2000);
-            displayRecords(); // 저장된 기록 불러오기
-        };
-
-        // 다크모드 토글
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-        }
-
-        function pickDessert(mood) {
-            currentMood = mood;
-            picked = menu[Math.floor(Math.random() * menu.length)];
-            document.getElementById('mood-desc').innerText = `'${mood}' 할 때 추천하는 메뉴!`;
-            document.getElementById('dessert-name').innerText = picked;
-            document.getElementById('result-screen').style.display = 'block';
-            window.scrollTo({ top: document.getElementById('result-screen').offsetTop, behavior: 'smooth' });
-        }
-
-        // 로컬 스토리지에 저장
-        function saveToMyList() {
-            const records = JSON.parse(localStorage.getItem('puruRecords') || '[]');
-            const newRecord = {
-                id: Date.now(),
-                mood: currentMood,
-                dessert: picked,
-                date: new Date().toLocaleDateString()
-            };
-            records.unshift(newRecord);
-            localStorage.setItem('puruRecords', JSON.stringify(records));
-            displayRecords();
-            alert('저장되었습니다! 하단 목록에서 확인하세요. 🍮');
-        }
-
-        // 저장된 목록 화면에 그리기
-        function displayRecords() {
-            const listDiv = document.getElementById('record-list');
-            const records = JSON.parse(localStorage.getItem('puruRecords') || '[]');
-            
-            if (records.length === 0) {
-                listDiv.innerHTML = '<p style="font-size: 12px; opacity: 0.6;">아직 저장된 기록이 없어요.</p>';
-                return;
-            }
-
-            listDiv.innerHTML = records.map(r => `
-                <div class="record-card">
-                    <div>
-                        <strong style="color:var(--pudding-syrup)">${r.dessert}</strong>
-                        <div style="font-size:11px; opacity:0.7;">${r.date} | ${r.mood}</div>
-                    </div>
-                    <span class="delete-btn" onclick="deleteRecord(${r.id})">삭제</span>
-                </div>
-            `).join('');
-        }
-
-        function deleteRecord(id) {
-            let records = JSON.parse(localStorage.getItem('puruRecords') || '[]');
-            records = records.filter(r => r.id !== id);
-            localStorage.setItem('puruRecords', JSON.stringify(records));
-            displayRecords();
-        }
-
-        function resetPage() {
-            document.getElementById('result-screen').style.display = 'none';
-            document.getElementById('map-area').style.display = 'none';
-            document.getElementById('main-screen').style.display = 'block';
-        }
-
-        // 지도 기능 (기존 유지)
-        function showMap() {
-            document.getElementById('main-screen').style.display = 'none';
-            document.getElementById('map-area').style.display = 'flex';
-            if (!mapObj) {
-                mapObj = new kakao.maps.Map(document.getElementById('map'), { center: new kakao.maps.LatLng(37.5668, 126.9786), level: 4 });
-                psObj = new kakao.maps.services.Places();
-                infoObj = new kakao.maps.InfoWindow({ zIndex: 1 });
-            }
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(pos) {
-                    const myPos = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-                    mapObj.setCenter(myPos);
-                    psObj.keywordSearch(picked + ' 카페', (data, status) => {
-                        if (status === kakao.maps.services.Status.OK) renderList(data);
-                        else alert("주변에 매장이 없어요 😭");
-                    }, { location: myPos, radius: 2000 });
-                });
-            }
-        }
-
-        function renderList(places) {
-            const listDiv = document.getElementById('placesList');
-            const bounds = new kakao.maps.LatLngBounds();
-            listDiv.innerHTML = '';
-            places.forEach(p => {
-                const pos = new kakao.maps.LatLng(p.y, p.x);
-                const marker = new kakao.maps.Marker({ position: pos, map: mapObj });
-                const item = document.createElement('div');
-                item.className = 'item';
-                item.innerHTML = `<strong>${p.place_name}</strong><br><span style="font-size:11px;">${p.address_name}</span>`;
-                item.onclick = () => { mapObj.panTo(pos); infoObj.setContent('<div style="padding:10px; font-size:12px;">' + p.place_name + '</div>'); infoObj.open(mapObj, marker); };
-                listDiv.appendChild(item);
-                bounds.extend(pos);
-            });
-            mapObj.setBounds(bounds);
-        }
-    </script>
-</body>
-</html>
+        <h1>
