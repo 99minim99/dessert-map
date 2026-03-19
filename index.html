@@ -11,78 +11,71 @@
             --pudding-brown: #634832; 
             --pudding-syrup: #8B4513; 
             --pudding-cream: #FFF9E3; 
-            --point-red: #FF6B6B; 
+            --point-red: #FF6B6B;
+            --bg-color: var(--pudding-cream);
+            --text-color: var(--pudding-brown);
+            --card-bg: #ffffff;
         }
 
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Pretendard', sans-serif; background-color: var(--pudding-cream); color: var(--pudding-brown); overflow-x: hidden; }
+        /* 다크 모드 (초코 푸딩 컨셉) */
+        body.dark-mode {
+            --bg-color: #3C2A1A;
+            --text-color: #FFF9E3;
+            --card-bg: #4A3524;
+            --pudding-yellow: #D2691E;
+        }
 
-        /* --- 스플래시 화면 스타일 --- */
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: background 0.3s, color 0.3s; }
+
         #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--pudding-cream);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            transition: opacity 0.5s ease; /* 사라질 때 부드럽게 */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #FFF9E3;
+            display: flex; justify-content: center; align-items: center; z-index: 2000; transition: opacity 0.5s;
         }
-        #splash-screen img {
-            width: 200px; /* 로고 크기 조절 */
-            height: auto;
-            animation: bounce 1.5s infinite; /* 로고가 통통 튀는 애니메이션 */
-        }
+        #splash-screen img { width: 180px; animation: bounce 1.5s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        /* --- 심플하고 깔끔한 시럽 상단바 --- */
         #syrup-header {
-            position: relative;
-            width: 100%;
-            height: 50px;
-            background: var(--pudding-syrup);
-            z-index: 10;
-            border-radius: 0 0 40px 40px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative; width: 100%; height: 50px; background: var(--pudding-syrup); z-index: 10;
+            border-radius: 0 0 40px 40px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;
         }
 
-        /* 메인 컨테이너 */
-        .container { max-width: 500px; margin: 0 auto; padding: 40px 20px 20px 20px; text-align: center; display: flex; flex-direction: column; min-height: 100vh; box-sizing: border-box; }
-        
-        h1 { font-size: 26px; margin-top: 20px; letter-spacing: -1px; }
-        .sub-title { font-size: 15px; opacity: 0.7; margin-bottom: 30px; }
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; text-align: center; box-sizing: border-box; }
+        h1 { font-size: 26px; margin-top: 20px; }
+        .sub-title { font-size: 14px; opacity: 0.8; margin-bottom: 25px; }
 
-        .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .mood-btn { 
-            padding: 20px 5px; border: none; background: white; border-radius: 18px; 
-            cursor: pointer; color: var(--pudding-brown); font-size: 14px; font-weight: 600; 
-            box-shadow: 0 4px 0px var(--pudding-yellow); 
+            padding: 15px 5px; border: none; background: var(--card-bg); border-radius: 18px; 
+            cursor: pointer; color: var(--text-color); font-weight: 600; 
+            box-shadow: 0 4px 0px var(--pudding-yellow); transition: transform 0.1s;
         }
+        .mood-btn:active { transform: translateY(3px); box-shadow: none; }
         
         #result-screen { 
-            display: none; background: white; border-radius: 25px; padding: 30px 20px; 
-            border: 3px solid var(--pudding-yellow); margin-top: 25px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+            display: none; background: var(--card-bg); border-radius: 25px; padding: 25px; 
+            border: 3px solid var(--pudding-yellow); margin-top: 20px; 
         }
-        .recommended-item { font-size: 30px; font-weight: 900; color: var(--pudding-syrup); margin: 15px 0; }
+        .recommended-item { font-size: 28px; font-weight: 900; color: var(--point-red); margin: 10px 0; }
         
-        .action-btn { width: 100%; padding: 16px; margin-top: 10px; border-radius: 15px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .action-btn { width: 100%; padding: 14px; margin-top: 8px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; }
         .go-map { background: var(--pudding-syrup); color: white; }
-        .retry { background: #F3F3F3; color: #999; }
+        .save-btn { background: var(--pudding-yellow); color: var(--pudding-brown); }
+        .retry { background: #eee; color: #777; }
 
-        /* 지도 영역 */
+        /* 저장 목록 스타일 */
+        #my-records { margin-top: 40px; text-align: left; }
+        .record-card { 
+            background: var(--card-bg); padding: 15px; border-radius: 15px; margin-bottom: 10px; 
+            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .delete-btn { color: var(--point-red); cursor: pointer; font-size: 12px; }
+
         #map-area { display: none; height: 100vh; width: 100%; flex-direction: column; position: fixed; top: 0; left: 0; z-index: 100; }
         #map { width: 100%; flex: 1; }
         #placesList { height: 40%; background: white; overflow-y: auto; border-top: 4px solid var(--pudding-syrup); }
-        .item { padding: 18px; border-bottom: 1px solid #f5f5f5; text-align: left; }
-        .item .title { font-weight: bold; color: var(--pudding-syrup); }
-        .back-btn { position: absolute; top: 15px; left: 15px; z-index: 1001; padding: 10px 18px; background: white; border-radius: 25px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-weight: bold; }
+        .item { padding: 15px; border-bottom: 1px solid #eee; color: #333; }
+        .back-btn { position: absolute; top: 15px; left: 15px; z-index: 1001; padding: 8px 15px; background: white; border-radius: 20px; border: none; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
@@ -91,7 +84,7 @@
         <img src="purumood_logo.png" alt="Puru Mood Logo">
     </div>
 
-    <div id="syrup-header"></div>
+    <div id="syrup-header" onclick="toggleDarkMode()">🍫 시럽을 누르면 '초코 모드'!</div>
 
     <div id="main-screen" class="container">
         <h1>🍮 오늘의 디저트</h1>
@@ -107,10 +100,18 @@
         </div>
 
         <div id="result-screen">
-            <div id="mood-desc" style="font-size: 14px;"></div>
+            <div id="mood-desc" style="font-size: 14px; opacity: 0.8;"></div>
             <div id="dessert-name" class="recommended-item"></div>
+            <button class="action-btn save-btn" onclick="saveToMyList()">⭐ 이 디저트 저장하기</button>
             <button class="action-btn go-map" onclick="showMap()">근처 카페 찾기</button>
-            <button class="action-btn retry" onclick="resetPage()">다른 거 고를래</button>
+            <button class="action-btn retry" onclick="resetPage()">다시 고를래</button>
+        </div>
+
+        <div id="my-records">
+            <h3 style="font-size: 16px;">📂 나의 디저트 기록</h3>
+            <div id="record-list">
+                <p style="font-size: 12px; opacity: 0.6;">아직 저장된 기록이 없어요.</p>
+            </div>
         </div>
     </div>
 
@@ -121,53 +122,99 @@
     </div>
 
     <script>
-        // 2. 스플래시 화면 제어 스크립트
-        window.onload = function() {
-            setTimeout(function() {
-                const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0'; // 서서히 사라짐
-                setTimeout(() => splash.style.display = 'none', 500); // 0.5초 후 제거
-            }, 2500); // 2.5초 동안 로고 유지
-        };
-
-        const menu = ["푸딩", "마카롱", "수플레", "타르트", "소금빵", "케이크", "휘낭시에", "크로플"];
+        const menu = ["푸딩", "마카롱", "수플레", "타르트", "소금빵", "케이크", "휘낭시에", "크로플", "까눌레", "약과 쿠키"];
         let picked = "";
+        let currentMood = "";
         let mapObj, psObj, infoObj;
 
+        window.onload = function() {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => splash.style.display = 'none', 500);
+            }, 2000);
+            displayRecords(); // 저장된 기록 불러오기
+        };
+
+        // 다크모드 토글
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
         function pickDessert(mood) {
+            currentMood = mood;
             picked = menu[Math.floor(Math.random() * menu.length)];
             document.getElementById('mood-desc').innerText = `'${mood}' 할 때 추천하는 메뉴!`;
             document.getElementById('dessert-name').innerText = picked;
             document.getElementById('result-screen').style.display = 'block';
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            window.scrollTo({ top: document.getElementById('result-screen').offsetTop, behavior: 'smooth' });
+        }
+
+        // 로컬 스토리지에 저장
+        function saveToMyList() {
+            const records = JSON.parse(localStorage.getItem('puruRecords') || '[]');
+            const newRecord = {
+                id: Date.now(),
+                mood: currentMood,
+                dessert: picked,
+                date: new Date().toLocaleDateString()
+            };
+            records.unshift(newRecord);
+            localStorage.setItem('puruRecords', JSON.stringify(records));
+            displayRecords();
+            alert('저장되었습니다! 하단 목록에서 확인하세요. 🍮');
+        }
+
+        // 저장된 목록 화면에 그리기
+        function displayRecords() {
+            const listDiv = document.getElementById('record-list');
+            const records = JSON.parse(localStorage.getItem('puruRecords') || '[]');
+            
+            if (records.length === 0) {
+                listDiv.innerHTML = '<p style="font-size: 12px; opacity: 0.6;">아직 저장된 기록이 없어요.</p>';
+                return;
+            }
+
+            listDiv.innerHTML = records.map(r => `
+                <div class="record-card">
+                    <div>
+                        <strong style="color:var(--pudding-syrup)">${r.dessert}</strong>
+                        <div style="font-size:11px; opacity:0.7;">${r.date} | ${r.mood}</div>
+                    </div>
+                    <span class="delete-btn" onclick="deleteRecord(${r.id})">삭제</span>
+                </div>
+            `).join('');
+        }
+
+        function deleteRecord(id) {
+            let records = JSON.parse(localStorage.getItem('puruRecords') || '[]');
+            records = records.filter(r => r.id !== id);
+            localStorage.setItem('puruRecords', JSON.stringify(records));
+            displayRecords();
         }
 
         function resetPage() {
-            document.getElementById('syrup-header').style.display = 'block';
-            document.getElementById('main-screen').style.display = 'block';
-            document.getElementById('map-area').style.display = 'none';
             document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('map-area').style.display = 'none';
+            document.getElementById('main-screen').style.display = 'block';
         }
 
+        // 지도 기능 (기존 유지)
         function showMap() {
-            document.getElementById('syrup-header').style.display = 'none';
             document.getElementById('main-screen').style.display = 'none';
             document.getElementById('map-area').style.display = 'flex';
-
             if (!mapObj) {
-                const container = document.getElementById('map');
-                mapObj = new kakao.maps.Map(container, { center: new kakao.maps.LatLng(37.5668, 126.9786), level: 4 });
+                mapObj = new kakao.maps.Map(document.getElementById('map'), { center: new kakao.maps.LatLng(37.5668, 126.9786), level: 4 });
                 psObj = new kakao.maps.services.Places();
                 infoObj = new kakao.maps.InfoWindow({ zIndex: 1 });
             }
-
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function(pos) {
                     const myPos = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
                     mapObj.setCenter(myPos);
                     psObj.keywordSearch(picked + ' 카페', (data, status) => {
                         if (status === kakao.maps.services.Status.OK) renderList(data);
-                        else alert("주변에 원하는 디저트가 없어요😭");
+                        else alert("주변에 매장이 없어요 😭");
                     }, { location: myPos, radius: 2000 });
                 });
             }
@@ -182,12 +229,8 @@
                 const marker = new kakao.maps.Marker({ position: pos, map: mapObj });
                 const item = document.createElement('div');
                 item.className = 'item';
-                item.innerHTML = `<span class="title">${p.place_name}</span><br><span style="font-size:12px; color:#999;">${p.road_address_name || p.address_name}</span>`;
-                item.onclick = () => {
-                    mapObj.panTo(pos);
-                    infoObj.setContent(`<div style="padding:15px; font-size:12px; width:180px;"><strong>${p.place_name}</strong><br><a href="${p.place_url}" target="_blank" style="color:var(--point-red); margin-top:5px; display:inline-block;">[상세보기]</a></div>`);
-                    infoObj.open(mapObj, marker);
-                };
+                item.innerHTML = `<strong>${p.place_name}</strong><br><span style="font-size:11px;">${p.address_name}</span>`;
+                item.onclick = () => { mapObj.panTo(pos); infoObj.setContent('<div style="padding:10px; font-size:12px;">' + p.place_name + '</div>'); infoObj.open(mapObj, marker); };
                 listDiv.appendChild(item);
                 bounds.extend(pos);
             });
